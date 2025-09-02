@@ -1,0 +1,20 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "ESNext",
+    "moduleResolution": "NodeNext",
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "resolveJsonModule": true,
+    "rootDir": ".",
+    "baseUrl": ".",
+    "paths": {
+      "@core/*": ["packages/core/*"],
+      "@agent/*": ["packages/agent/*"],
+      "@services/*": ["packages/services/*"],
+      "@web/*": ["apps/web/*"]
+    }
+  },
+  "include": ["packages", "apps", "tests"]
+}
