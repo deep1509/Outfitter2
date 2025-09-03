@@ -25,6 +25,10 @@ async function main() {
     const res = await runAgent(messages);
     console.log('Agent:', res.message);
     messages.push({ role: 'assistant', content: res.message });
+    if (res.debug?.length) {
+      console.log('Debug:');
+      for (const d of res.debug) console.log(' ', d);
+    }
     if (res.suggestions?.length) {
       console.log('Suggestions:');
       for (const s of res.suggestions) {

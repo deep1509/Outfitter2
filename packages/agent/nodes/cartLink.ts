@@ -16,5 +16,6 @@ export async function cartLink(state: AgentState): Promise<AgentState> {
       state.suggestions.push({ product: prod, variantId, cartUrl });
     }
   }
+  state.debug?.push(`cartLink: ${state.suggestions.length} suggestions`);
   return state;
 }

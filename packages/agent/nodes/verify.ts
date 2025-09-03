@@ -80,5 +80,6 @@ export async function verify(state: AgentState): Promise<AgentState> {
   const res = verifyProducts(state.products || [], state.intent!, { allowedHosts });
   state.guardrailFindings = { violations: res.violations, passed: res.passed };
   state.products = res.products;
+  state.debug?.push(`verify: ${JSON.stringify(state.guardrailFindings)}`);
   return state;
 }

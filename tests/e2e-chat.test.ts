@@ -59,6 +59,10 @@ vi.mock('../packages/core/shopify.js', () => ({
   })
 }));
 
+vi.mock('../packages/services/openai.js', () => ({
+  chat: vi.fn(async () => 'Here are some options you might like.')
+}));
+
 describe('e2e chat', () => {
   it('returns suggestions with cart links', async () => {
     const res = await runAgent([

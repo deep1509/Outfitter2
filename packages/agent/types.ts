@@ -9,4 +9,5 @@ export type AgentState = {
   products?: Product[];
   suggestions?: Suggestion[];
   guardrailFindings?: { violations: string[]; passed: boolean };
+  debug?: string[];
 };

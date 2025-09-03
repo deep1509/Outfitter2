@@ -1,6 +1,6 @@
 import { AgentState } from '../types';
 
 export async function rank(state: AgentState): Promise<AgentState> {
-  // Stage 1: keep existing order
+  state.debug?.push('rank: passthrough');
   return state;
 }

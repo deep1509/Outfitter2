@@ -9,7 +9,7 @@ import { cartLink } from './nodes/cartLink';
 import { finalize } from './nodes/finalize';
 
 export async function runAgent(messages: Message[]) {
-  let state: AgentState = { messages };
+  let state: AgentState = { messages, debug: [] };
   state = await salesperson(state);
   state = await plan(state);
   state = await search(state);
@@ -19,5 +19,5 @@ export async function runAgent(messages: Message[]) {
   state = await cartLink(state);
   state = await finalize(state);
   const last = state.messages[state.messages.length - 1];
-  return { message: last.content, suggestions: state.suggestions };
+  return { message: last.content, suggestions: state.suggestions, debug: state.debug };
 }

@@ -11,5 +11,6 @@ export async function fetchProduct(state: AgentState): Promise<AgentState> {
       // ignore
     }
   }
+  state.debug?.push(`fetchProduct: ${state.products.length} products`);
   return state;
 }
