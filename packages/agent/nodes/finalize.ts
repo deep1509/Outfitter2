@@ -2,6 +2,12 @@ import { AgentState } from '../types';
 import { chat } from '@services/openai';
 
 export async function finalize(state: AgentState): Promise<AgentState> {
+  if (state.error) {
+    const reply = 'I had trouble searching for products. Please verify your search API key and try again.';
+    state.messages.push({ role: 'assistant', content: reply });
+    return state;
+  }
+
   const system = {
     role: 'system',
     content:

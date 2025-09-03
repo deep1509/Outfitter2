@@ -1,8 +1,27 @@
 import readline from 'node:readline/promises';
 import { stdin as input, stdout as output } from 'node:process';
+import { readFileSync } from 'node:fs';
+import { resolve } from 'node:path';
 import type { Message } from '../../packages/agent/types.js';
 import { runAgent } from '../../packages/agent/graph.js';
 import { healthCheck } from '../../packages/services/health.js';
+
+function loadEnv() {
+  try {
+    const env = readFileSync(resolve(process.cwd(), '.env'), 'utf8');
+    for (const line of env.split('\n')) {
+      const match = line.match(/^\s*([^#=]+)\s*=\s*(.*)\s*$/);
+      if (match) {
+        const [, key, value] = match;
+        if (!process.env[key]) {
+          process.env[key] = value.replace(/^['"]|['"]$/g, '');
+        }
+      }
+    }
+  } catch {}
+}
+
+loadEnv();
 
 async function main() {
   const rl = readline.createInterface({ input, output });
