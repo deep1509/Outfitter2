@@ -12,8 +12,7 @@
     "paths": {
       "@core/*": ["packages/core/*"],
       "@agent/*": ["packages/agent/*"],
-      "@services/*": ["packages/services/*"],
-      "@web/*": ["apps/web/*"]
+      "@services/*": ["packages/services/*"]
     }
   },
   "include": ["packages", "apps", "tests"]

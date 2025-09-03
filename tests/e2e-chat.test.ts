@@ -1,6 +1,6 @@
 import { describe, it, expect, vi } from 'vitest';
-import { POST } from '@web/app/api/chat/route';
-import { Product } from '@core/types';
+import { runAgent } from '../packages/agent/graph.js';
+import { Product } from '../packages/core/types.js';
 
 const shirt: Product = {
   id: 'p1',
@@ -44,14 +44,14 @@ const pants: Product = {
   ]
 };
 
-vi.mock('@services/serper', () => ({
+vi.mock('../packages/services/serper.js', () => ({
   serperSearch: vi.fn(async () => [
     'https://culturekings.com.au/products/crimson-tee',
     'https://culturekings.com.au/products/red-cargo'
   ])
 }));
 
-vi.mock('@core/shopify', () => ({
+vi.mock('../packages/core/shopify.js', () => ({
   buildCartPermalink: (domain: string, ids: string[]) => `https://${domain}/cart/${ids.map((id) => `${id}:1`).join(',')}`,
   fetchShopifyProduct: vi.fn(async (url: string) => {
     if (url.includes('crimson-tee')) return shirt;
@@ -61,14 +61,11 @@ vi.mock('@core/shopify', () => ({
 
 describe('e2e chat', () => {
   it('returns suggestions with cart links', async () => {
-    const req = new Request('http://localhost', {
-      method: 'POST',
-      body: JSON.stringify({ messages: [{ role: 'user', content: 'I want a red shirt and matching cargo trousers, size M, budget $150.' }] })
-    });
-    const res = await POST(req as any);
-    const data = await res.json();
-    expect(data.suggestions.length).toBe(2);
-    expect(data.suggestions[0].cartUrl).toMatch(/cart\/111:1/);
-    expect(data.suggestions[1].cartUrl).toMatch(/cart\/222:1/);
+    const res = await runAgent([
+      { role: 'user', content: 'I want a red shirt and matching cargo trousers, size M, budget $150.' }
+    ]);
+    expect(res.suggestions?.length).toBe(2);
+    expect(res.suggestions?.[0].cartUrl).toMatch(/cart\/111:1/);
+    expect(res.suggestions?.[1].cartUrl).toMatch(/cart\/222:1/);
   });
 });

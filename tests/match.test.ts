@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import { findVariant } from '@core/match';
-import { Product } from '@core/types';
+import { findVariant } from '../packages/core/match.js';
+import { Product } from '../packages/core/types.js';
 
 describe('match', () => {
   const product: Product = {

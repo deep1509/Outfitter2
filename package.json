@@ -4,14 +4,11 @@
   "type": "module",
   "workspaces": ["apps/*", "packages/*", "tests"],
   "scripts": {
-    "dev": "next dev apps/web",
-    "test": "vitest",
-    "gardio": "python apps/gardio/app.py"
+    "chat": "tsx apps/cli/index.ts",
+    "dev": "tsx apps/cli/index.ts",
+    "test": "vitest"
   },
   "dependencies": {
-    "next": "14.1.0",
-    "react": "18.2.0",
-    "react-dom": "18.2.0",
     "zod": "^3.22.4",
     "pino": "^8.15.0",
     "openai": "^4.0.0",

@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import { verifyProducts } from '@agent/nodes/verify';
-import { Product, Intent } from '@core/types';
+import { verifyProducts } from '../packages/agent/nodes/verify.js';
+import { Product, Intent } from '../packages/core/types.js';
 
 const baseProduct: Product = {
   id: '1',

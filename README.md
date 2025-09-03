@@ -7,14 +7,7 @@ Local-first demo of an agentic shopper for apparel. The agent queries public Sho
 ```bash
 pnpm i
 cp .env.example .env
-pnpm dev
-```
-
-For a local chatbot interface powered by Gardio (using Gradio under the hood), run:
-
-```bash
-pip install -r apps/gardio/requirements.txt
-python apps/gardio/app.py
+pnpm chat
 ```
 
 ## What's included

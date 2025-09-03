@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { buildCartPermalink } from '@core/shopify';
+import { buildCartPermalink } from '../packages/core/shopify.js';
 
 describe('cart link', () => {
   it('builds culture kings url', () => {
