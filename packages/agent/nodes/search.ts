@@ -17,8 +17,11 @@ export async function search(state: AgentState): Promise<AgentState> {
   try {
     const urls = await serperSearch(query, site);
     state.candidateUrls = urls.filter((u) => {
-      const host = new URL(u).host.replace(/^www\./, '');
-      return ALLOWED_SHOPS.includes(host);
+      const parsed = new URL(u);
+      const host = parsed.host.replace(/^www\./, '');
+      const isAllowedHost = ALLOWED_SHOPS.includes(host);
+      const isProduct = /\/products\//.test(parsed.pathname);
+      return isAllowedHost && isProduct;
     });
     state.debug?.push(
       `search: ${query} -> ${state.candidateUrls.length} urls`
