@@ -5,6 +5,7 @@ export type Message = { role: 'user' | 'assistant' | 'tool'; content: string };
 export type AgentState = {
   messages: Message[];
   intent?: Intent;
+  searchQuery?: string;
   candidateUrls?: string[];
   products?: Product[];
   suggestions?: Suggestion[];
