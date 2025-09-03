@@ -5,6 +5,7 @@ import { resolve } from 'node:path';
 import type { Message } from '../../packages/agent/types.js';
 import { runAgent } from '../../packages/agent/graph.js';
 import { healthCheck } from '../../packages/services/health.js';
+import type { Suggestion } from '../../packages/core/types.js';
 
 function loadEnv() {
   try {
@@ -26,6 +27,7 @@ loadEnv();
 async function main() {
   const rl = readline.createInterface({ input, output });
   const messages: Message[] = [];
+  let suggestions: Suggestion[] = [];
   console.log('Welcome to outfitter-agent CLI. Type your request, or Ctrl+C to exit.');
 
   // Pre-flight check for external services
@@ -40,6 +42,16 @@ async function main() {
 
   while (true) {
     const user = await rl.question('You: ');
+
+    const sel = user.trim().match(/^(?:buy\s*)?(\d+)$/i);
+    if (sel && suggestions[Number(sel[1]) - 1]) {
+      const s = suggestions[Number(sel[1]) - 1];
+      const msg = `Here is your cart link for ${s.product.title}: ${s.cartUrl}`;
+      console.log('Agent:', msg);
+      messages.push({ role: 'assistant', content: msg });
+      continue;
+    }
+
     messages.push({ role: 'user', content: user });
     const res = await runAgent(messages);
     console.log('Agent:', res.message);
@@ -54,6 +66,7 @@ async function main() {
         console.log(`- ${s.product.title} - ${s.cartUrl}`);
       }
     }
+    suggestions = res.suggestions ?? [];
   }
 }
 

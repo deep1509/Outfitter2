@@ -36,4 +36,11 @@ describe('verify', () => {
     const res = verifyProducts([baseProduct], intent, { allowedHosts: ['culturekings.com.au'] });
     expect(res.passed).toBe(true);
   });
+
+  it('rejects disallowed host', () => {
+    const prod = { ...baseProduct, url: 'https://example.com/products/red-shirt' };
+    const intent: Intent = { items: [{ category: 'shirt', color: 'red', size: 'M' }] };
+    const res = verifyProducts([prod], intent, { allowedHosts: ['culturekings.com.au'] });
+    expect(res.passed).toBe(false);
+  });
 });

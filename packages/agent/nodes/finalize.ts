@@ -11,19 +11,26 @@ export async function finalize(state: AgentState): Promise<AgentState> {
   const system = {
     role: 'system',
     content:
-      'You are a friendly retail associate. Answer conversational questions and present verified products when available.',
+      'You are a friendly retail associate for Culture Kings. Only recommend products explicitly provided in the product list. If no products are given, ask the user for more details without inventing items or mentioning other retailers.',
   };
   const base = [system, ...state.messages];
   if (state.suggestions?.length) {
     const list = state.suggestions
-      .map((s, i) => `${i + 1}. ${s.product.title} - ${s.cartUrl}`)
+      .map(
+        (s, i) =>
+          `${i + 1}. ${s.product.title} - ${s.cartUrl}`
+      )
       .join('\n');
     base.push({
       role: 'system',
       content: `Recommend these products:\n${list}`,
     });
   } else {
-    base.push({ role: 'system', content: 'Ask for clarifying details if needed.' });
+    base.push({
+      role: 'system',
+      content:
+        'No products available yet. Ask clarifying questions about color, size, or budget.',
+    });
   }
   let reply = '';
   try {

@@ -38,7 +38,7 @@ export function verifyProducts(
   const passedProducts: Product[] = [];
 
   for (const product of parsed.data) {
-    const host = new URL(product.url).host;
+    const host = new URL(product.url).host.replace(/^www\./, '');
     if (!opts.allowedHosts.includes(host)) {
       violations.push('disallowed-host');
       continue;
@@ -76,7 +76,9 @@ export function verifyProducts(
 }
 
 export async function verify(state: AgentState): Promise<AgentState> {
-  const allowedHosts = (process.env.ALLOWED_SHOPS || '').split(',');
+  const allowedHosts = (process.env.ALLOWED_SHOPS || 'culturekings.com.au')
+    .split(',')
+    .map((h) => h.trim().replace(/^www\./, ''));
   const res = verifyProducts(state.products || [], state.intent!, { allowedHosts });
   state.guardrailFindings = { violations: res.violations, passed: res.passed };
   state.products = res.products;
