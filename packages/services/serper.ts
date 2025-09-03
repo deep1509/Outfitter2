@@ -8,6 +8,9 @@ export async function serperSearch(query: string, site: string): Promise<string[
     },
     body: JSON.stringify({ q: `${query} site:${site}` })
   });
+  if (!res.ok) {
+    throw new Error(`Serper error: ${res.status}`);
+  }
   const data: any = await res.json();
   return (data.organic || []).map((o: any) => o.link);
 }
