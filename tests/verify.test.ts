@@ -25,15 +25,23 @@ const baseProduct: Product = {
 
 describe('verify', () => {
   it('rejects wrong category', () => {
-    const prod = { ...baseProduct, title: 'Blue Jacket', url: 'https://culturekings.com.au/products/blue-jacket', tags: ['jacket'] };
+    const prod = { ...baseProduct, title: 'Blue Jacket', tags: ['jacket'] };
     const intent: Intent = { items: [{ category: 'shirt', color: 'red', size: 'M' }] };
     const res = verifyProducts([prod], intent, { allowedHosts: ['culturekings.com.au'] });
     expect(res.passed).toBe(false);
   });
 
-  it('accepts proper red shirt', () => {
+  it('rejects wrong color', () => {
+    const prod = { ...baseProduct, variants: [ { id: 'v2', priceCents: 2000, available: true, options:[{name:'Color', value:'Blue'}, {name:'Size', value:'M'}] } ] };
+    const intent: Intent = { items: [{ category: 'shirt', color: 'red', size: 'M' }] };
+    const res = verifyProducts([prod], intent, { allowedHosts: ['culturekings.com.au'] });
+    expect(res.passed).toBe(false);
+  });
+
+  it('accepts red synonyms and size M', () => {
+    const prod = { ...baseProduct, variants: [ { id: 'v3', priceCents: 2000, available: true, options:[{name:'Color', value:'Maroon'}, {name:'Size', value:'M'}] } ] };
     const intent: Intent = { items: [{ category: 'shirt', color: 'red', size: 'M', budgetCents: 3000 }] };
-    const res = verifyProducts([baseProduct], intent, { allowedHosts: ['culturekings.com.au'] });
+    const res = verifyProducts([prod], intent, { allowedHosts: ['culturekings.com.au'] });
     expect(res.passed).toBe(true);
   });
 

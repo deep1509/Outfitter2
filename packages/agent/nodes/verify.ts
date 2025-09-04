@@ -1,6 +1,6 @@
-import { AgentState } from '../types';
-import { colorsMatch, normalizeSize } from '@core/normalize';
-import { Intent, Product, Variant } from '@core/types';
+import { AgentState } from '../types.js';
+import { colorsMatch, normalizeSize } from '../../core/normalize.js';
+import { Intent, Product, Variant } from '../../core/types.js';
 import { z } from 'zod';
 
 const VariantSchema = z.object({
@@ -32,7 +32,7 @@ export function verifyProducts(
   const parsed = ProductSchema.array().safeParse(products);
   if (!parsed.success) {
     violations.push('invalid-product');
-    return { passed: false, violations, products: [] as Product[] };
+    return { passed: false, violations, products: [] as Product[], confidence: 0 };
   }
 
   const passedProducts: Product[] = [];
@@ -44,9 +44,11 @@ export function verifyProducts(
       continue;
     }
 
-    const intentItem = intent.items.find((i) =>
-      product.title.toLowerCase().includes(i.category)
-    );
+    const intentItem = intent.items.find((i) => {
+      const titleMatch = product.title.toLowerCase().includes(i.category);
+      const tagMatch = product.tags?.some(t => t.toLowerCase().includes(i.category));
+      return titleMatch || tagMatch;
+    });
     if (!intentItem) {
       violations.push('category-mismatch');
       continue;
@@ -61,7 +63,7 @@ export function verifyProducts(
         v.options.some((o) => colorsMatch(intentItem.color!, o.value));
       const priceOk =
         !intentItem.budgetCents || v.priceCents <= intentItem.budgetCents;
-      return sizeOk && colorOk && priceOk;
+      return sizeOk && colorOk && priceOk && v.available;
     });
 
     if (!variant) {
@@ -72,16 +74,32 @@ export function verifyProducts(
     passedProducts.push(product);
   }
 
-  return { passed: violations.length === 0, violations, products: passedProducts };
+  const confidence = parsed.data.length
+    ? passedProducts.length / parsed.data.length
+    : 0;
+
+  return { passed: violations.length === 0, violations, products: passedProducts, confidence };
 }
 
 export async function verify(state: AgentState): Promise<AgentState> {
   const allowedHosts = (process.env.ALLOWED_SHOPS || 'culturekings.com.au')
     .split(',')
     .map((h) => h.trim().replace(/^www\./, ''));
-  const res = verifyProducts(state.products || [], state.intent!, { allowedHosts });
-  state.guardrailFindings = { violations: res.violations, passed: res.passed };
-  state.products = res.products;
-  state.debug?.push(`verify: ${JSON.stringify(state.guardrailFindings)}`);
+  const res = verifyProducts(state.candidates || [], {
+    items: state.intent
+      ? state.intent.categories.map((c) => ({
+          category: c as any,
+          color: state.intent?.color,
+          size: state.intent?.size,
+          budgetCents: state.intent?.budgetCents,
+        }))
+      : [],
+  } as Intent, { allowedHosts });
+  state.guardrailFindings = {
+    violations: res.violations,
+    passed: res.passed,
+    confidence: res.confidence,
+  };
+  state.verified = res.products;
   return state;
 }
