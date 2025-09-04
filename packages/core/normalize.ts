@@ -1,7 +1,7 @@
 export const COLOR_MAP: Record<string, string[]> = {
   red: ['red', 'crimson', 'burgundy', 'maroon'],
   blue: ['blue', 'navy', 'royal'],
-  green: ['green', 'olive', 'forest']
+  green: ['green', 'olive', 'forest'],
 };
 
 export function normalizeColor(color: string): string | null {
@@ -18,6 +18,19 @@ export function colorsMatch(desired: string, candidate: string): boolean {
   return !!a && a === b;
 }
 
+const SIZE_MAP: Record<string, string> = {
+  xs: 'xs',
+  s: 's',
+  m: 'm',
+  l: 'l',
+  xl: 'xl',
+  xxl: 'xxl',
+  small: 's',
+  medium: 'm',
+  large: 'l',
+};
+
 export function normalizeSize(size: string): string {
-  return size.trim().toLowerCase();
+  const lower = size.trim().toLowerCase();
+  return SIZE_MAP[lower] || lower;
 }
